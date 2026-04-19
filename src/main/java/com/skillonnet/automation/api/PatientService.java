@@ -1,0 +1,53 @@
+package com.skillonnet.automation.api;
+
+import com.skillonnet.automation.dao.PatientDAO;
+import com.skillonnet.automation.model.Patient;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+
+import java.util.List;
+
+@Path("patients")
+public class PatientService {
+
+    private final PatientDAO patientDAO = new PatientDAO();
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Patient> list(@Context SecurityContext sc) {
+        Authz.require(sc, Roles.CLINICAL);
+        return patientDAO.findAll();
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Patient get(@Context SecurityContext sc, @PathParam("id") int id) {
+        Authz.require(sc, Roles.CLINICAL);
+        return patientDAO.findById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Patient put(@Context SecurityContext sc, @PathParam("id") int id, Patient body) {
+        Authz.require(sc, Roles.CLINICAL);
+        if (body.getPatientId() != 0 && body.getPatientId() != id) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+        body.setPatientId(id);
+        patientDAO.update(body);
+        return patientDAO.findById(id).orElseThrow(NotFoundException::new);
+    }
+}
