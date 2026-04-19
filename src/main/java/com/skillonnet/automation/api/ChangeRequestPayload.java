@@ -1,5 +1,8 @@
 package com.skillonnet.automation.api;
 
+/**
+ * JSON body for creating a change request (raw patient snapshot + requested edits).
+ */
 public class ChangeRequestPayload {
 
     private String rawPatientData;

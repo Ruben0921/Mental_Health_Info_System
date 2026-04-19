@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** Diagnosis/condition vocabulary item (domain model; may not be fully persisted in DDL). */
 public class Condition {
 
     private int conditionId;

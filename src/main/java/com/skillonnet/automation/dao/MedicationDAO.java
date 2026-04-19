@@ -10,6 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Inserts medication catalog rows.
+ */
 public class MedicationDAO {
 
     private final DBConnection db;
@@ -22,6 +25,7 @@ public class MedicationDAO {
         this.db = db;
     }
 
+    /** @return generated {@code medication_id} */
     public int insert(Medication m) {
         String sql = "INSERT INTO medication (name) VALUES (?)";
         try (Connection conn = db.newConnection();

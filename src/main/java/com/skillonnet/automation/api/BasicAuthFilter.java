@@ -17,10 +17,17 @@ import java.security.Principal;
 import java.util.Base64;
 import java.util.Optional;
 
+/**
+ * HTTP Basic authentication: validates credentials against {@link com.skillonnet.automation.dao.UserDAO}
+ * and installs a {@link SecurityContext} with the user's role.
+ */
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class BasicAuthFilter implements ContainerRequestFilter {
 
+    /**
+     * @param ctx request context; aborted with 401 if credentials are missing or invalid
+     */
     @Override
     public void filter(ContainerRequestContext ctx) throws IOException {
         String auth = ctx.getHeaderString(HttpHeaders.AUTHORIZATION);

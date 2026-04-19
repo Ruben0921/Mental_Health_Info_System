@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** Recorded adverse reaction to a medication for a patient. */
 public class AdverseReaction {
 
     private int reactionId;

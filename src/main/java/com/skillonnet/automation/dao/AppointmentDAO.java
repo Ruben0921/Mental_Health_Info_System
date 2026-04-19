@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * JDBC access for appointments, attendance updates, and receptionist reporting queries.
+ */
 public class AppointmentDAO {
 
     private final DBConnection db;
@@ -28,6 +31,7 @@ public class AppointmentDAO {
         this.db = db;
     }
 
+    /** Inserts a row and sets {@code appointmentId} on the model. */
     public int insert(Appointment a) {
         String sql = """
                 INSERT INTO appointment (patient_id, clinic_id, staff_id, appointment_date, type, status, records_updated)
@@ -59,6 +63,7 @@ public class AppointmentDAO {
         }
     }
 
+    /** Loads an appointment by id. */
     public Optional<Appointment> findById(int appointmentId) {
         String sql = """
                 SELECT appointment_id, patient_id, clinic_id, staff_id, appointment_date, type, status, records_updated
@@ -77,6 +82,7 @@ public class AppointmentDAO {
         }
     }
 
+    /** Sets the appointment {@code status} (e.g. Attended, Missed). */
     public void updateAttendance(int appointmentId, String status) {
         String sql = "UPDATE appointment SET status = ? WHERE appointment_id = ?";
         try (Connection conn = db.newConnection();
@@ -92,6 +98,7 @@ public class AppointmentDAO {
         }
     }
 
+    /** Missed appointments on a given local date ({@code status = 'Missed'}). */
     public List<MissedPatientRow> findMissedPatientsByDate(LocalDate date) {
         String sql = """
                 SELECT a.appointment_id, p.patient_id, p.first_name, p.last_name
@@ -118,6 +125,7 @@ public class AppointmentDAO {
         }
     }
 
+    /** Appointments whose clinical records flag is still false. */
     public List<Appointment> findAppointmentsWithRecordsNotUpdated() {
         String sql = """
                 SELECT appointment_id, patient_id, clinic_id, staff_id, appointment_date, type, status, records_updated

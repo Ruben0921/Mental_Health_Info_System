@@ -10,6 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Stores and queries patient adverse reactions to medications.
+ */
 public class AdverseReactionDAO {
 
     private final DBConnection db;
@@ -22,6 +25,7 @@ public class AdverseReactionDAO {
         this.db = db;
     }
 
+    /** @return true if a reaction row exists for the patient and medication */
     public boolean existsByPatientAndMedication(int patientId, int medicationId) {
         String sql = """
                 SELECT 1 FROM adverse_reaction WHERE patient_id = ? AND medication_id = ?""";
@@ -37,6 +41,7 @@ public class AdverseReactionDAO {
         }
     }
 
+    /** @return generated {@code reaction_id} */
     public int insert(AdverseReaction r) {
         String sql = "INSERT INTO adverse_reaction (patient_id, medication_id, description) VALUES (?, ?, ?)";
         try (Connection conn = db.newConnection();

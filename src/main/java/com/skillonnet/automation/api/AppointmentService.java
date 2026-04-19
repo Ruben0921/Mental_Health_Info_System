@@ -18,11 +18,15 @@ import jakarta.ws.rs.core.SecurityContext;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Receptionist REST API for appointments ({@link Roles#RECEPTIONIST}).
+ */
 @Path("appointments")
 public class AppointmentService {
 
     private final AppointmentDAO appointmentDAO = new AppointmentDAO();
 
+    /** Creates an appointment; server assigns {@link Appointment#getAppointmentId()}. */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,6 +36,7 @@ public class AppointmentService {
         return appointmentDAO.findById(body.getAppointmentId()).orElseThrow();
     }
 
+    /** Updates attendance status for an appointment. */
     @PUT
     @Path("{id}/attendance")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -40,6 +45,7 @@ public class AppointmentService {
         appointmentDAO.updateAttendance(id, body.getStatus());
     }
 
+    /** Patients who missed appointments on the given calendar date. */
     @GET
     @Path("missed")
     @Produces(MediaType.APPLICATION_JSON)
@@ -49,6 +55,7 @@ public class AppointmentService {
         return appointmentDAO.findMissedPatientsByDate(d);
     }
 
+    /** Appointments where clinical records have not been updated after attendance. */
     @GET
     @Path("pending-records")
     @Produces(MediaType.APPLICATION_JSON)

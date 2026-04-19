@@ -9,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Persists patient change requests (status defaults to Pending).
+ */
 public class ChangeRequestDAO {
 
     private final DBConnection db;
@@ -21,6 +24,7 @@ public class ChangeRequestDAO {
         this.db = db;
     }
 
+    /** @return generated {@code request_id} */
     public int insert(String rawPatientData, String requestedChanges) {
         String sql = "INSERT INTO change_requests (raw_patient_data, requested_changes, status) VALUES (?, ?, 'Pending')";
         try (Connection conn = db.newConnection();

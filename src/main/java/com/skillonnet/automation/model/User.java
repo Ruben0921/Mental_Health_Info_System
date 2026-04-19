@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** Authenticated system user with a role (maps to {@code users} table). */
 public class User {
 
     private int userId;

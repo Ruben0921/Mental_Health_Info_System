@@ -8,8 +8,17 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
 
+/**
+ * Entry point: loads {@code config.properties}, starts Grizzly HTTP with the Jersey application.
+ */
 public class Main {
 
+    /**
+     * Starts the REST server on {@code api.baseUri} (default {@code http://localhost:8080/}) and blocks.
+     *
+     * @param args unused
+     * @throws Exception if the server fails to start
+     */
     public static void main(String[] args) throws Exception {
         Properties p = new Properties();
         try (InputStream in = Main.class.getResourceAsStream("/config.properties")) {

@@ -11,20 +11,30 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Loads users for authentication; passwords compared to {@code users.password_hash} as stored (demo plain-text).
+ */
 public class UserDAO {
 
     private static final Set<String> ROLES = Set.of("Clinical", "Receptionist", "Medical_Records");
 
     private final DBConnection db;
 
+    /** Uses the shared {@link DBConnection}. */
     public UserDAO() {
         this(DBConnection.getInstance());
     }
 
+    /** @param db JDBC configuration source */
     public UserDAO(DBConnection db) {
         this.db = db;
     }
 
+    /**
+     * @param username login name
+     * @param password password to verify
+     * @return user when credentials match and role is allowed
+     */
     public Optional<User> authenticate(String username, String password) {
         String sql = "SELECT user_id, username, password_hash, role FROM users WHERE username = ?";
         try (Connection conn = db.newConnection();

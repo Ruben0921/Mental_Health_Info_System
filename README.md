@@ -112,6 +112,23 @@ Expect HTTP **200** and JSON bodies when auth and data are valid. Without creden
 | Receptionist | `POST /appointments`, `PUT /appointments/{id}/attendance`, `GET /appointments/missed?date=YYYY-MM-DD`, `GET /appointments/pending-records` |
 | Medical_Records | `GET /reports/patients-per-clinic`, `GET /reports/prescription-stats`, `POST /reports/change-requests` |
 
+### 3. Full REST smoke (all endpoints)
+
+Reset and load the deterministic smoke dataset (after schema is applied):
+
+```bash
+mysql -u YOUR_USER -p mental_health < scripts/seed-smoke.sql
+```
+
+Start the API (see step **d** above), then in another terminal from the project root:
+
+```bash
+chmod +x scripts/smoke-all-endpoints.sh   # once
+./scripts/smoke-all-endpoints.sh
+```
+
+The script calls **every** route (Clinical, Receptionist, Medical_Records), including `POST /appointments` and `PUT .../attendance` using a newly created appointment id, then checks **401** (no credentials) and **403** (wrong role). Override defaults with environment variables if needed: `BASE_URL`, `CLINICAL_USER`, `CLINICAL_PASS`, `RECEPTION_USER`, `RECEPTION_PASS`, `RECORDS_USER`, `RECORDS_PASS`, `MISSED_DATE`, `NEW_APPT_DATE`.
+
 ## Data model
 
 Conceptual entity-relationship view (some tables, e.g. `patient_condition` and `comment`, are modeled in code but not all are present in the shipped MySQL DDL—extend `schema.sql` if you need them in the database).

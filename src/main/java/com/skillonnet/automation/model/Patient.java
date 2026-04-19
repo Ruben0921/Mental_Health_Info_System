@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** Mental health patient demographics and risk flags (maps to {@code patients} table). */
 public class Patient {
 
     private int patientId;

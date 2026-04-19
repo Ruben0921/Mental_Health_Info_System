@@ -2,6 +2,7 @@ package com.skillonnet.automation.model;
 
 import java.time.LocalDate;
 
+/** Prescriber acknowledgement when overriding an allergy/warning. */
 public class WarningOverride {
 
     private int overrideId;

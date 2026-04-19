@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Aggregate reporting queries for medical records dashboards.
+ */
 public class ReportingDAO {
 
     private final DBConnection db;
@@ -24,6 +27,7 @@ public class ReportingDAO {
         this.db = db;
     }
 
+    /** Distinct patients seen per clinic (via appointments). */
     public List<ClinicPatientCount> countDistinctPatientsPerClinic() {
         String sql = """
                 SELECT c.clinic_id, c.name, COUNT(DISTINCT a.patient_id) AS cnt
@@ -48,6 +52,7 @@ public class ReportingDAO {
         }
     }
 
+    /** Counts prescription rows grouped by medication. */
     public List<MedicationPrescriptionStat> prescriptionTotalsByMedication() {
         String sql = """
                 SELECT m.medication_id, m.name, COUNT(*) AS cnt

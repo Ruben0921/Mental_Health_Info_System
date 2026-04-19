@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** Medication catalog entry (maps to {@code medication} table). */
 public class Medication {
 
     private int medicationId;

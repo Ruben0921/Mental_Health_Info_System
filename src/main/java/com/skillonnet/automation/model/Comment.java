@@ -2,6 +2,7 @@ package com.skillonnet.automation.model;
 
 import java.time.LocalDate;
 
+/** Clinician free-text comment on a patient record (domain model). */
 public class Comment {
 
     private int commentId;

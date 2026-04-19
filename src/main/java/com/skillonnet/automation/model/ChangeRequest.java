@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** Patient-initiated change request stored for medical records review. */
 public class ChangeRequest {
 
     private int requestId;

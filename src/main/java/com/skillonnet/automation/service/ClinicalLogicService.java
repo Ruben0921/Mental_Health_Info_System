@@ -9,6 +9,9 @@ import com.skillonnet.automation.exception.WarningException;
 import com.skillonnet.automation.model.Prescription;
 import com.skillonnet.automation.model.WarningOverride;
 
+/**
+ * Domain rules for prescriptions, overrides, and self-harm flags (used by tests and future APIs).
+ */
 public class ClinicalLogicService {
 
     private final AdverseReactionDAO adverseReactionDAO;
@@ -17,6 +20,7 @@ public class ClinicalLogicService {
     private final IncidentDAO incidentDAO;
     private final PatientDAO patientDAO;
 
+    /** Wires default DAO implementations. */
     public ClinicalLogicService() {
         this(
                 new AdverseReactionDAO(),
@@ -26,6 +30,13 @@ public class ClinicalLogicService {
                 new PatientDAO());
     }
 
+    /**
+     * @param adverseReactionDAO adverse reaction lookup
+     * @param prescriptionDAO prescription persistence
+     * @param warningOverrideDAO override persistence
+     * @param incidentDAO incident queries
+     * @param patientDAO patient updates
+     */
     public ClinicalLogicService(
             AdverseReactionDAO adverseReactionDAO,
             PrescriptionDAO prescriptionDAO,
@@ -39,6 +50,11 @@ public class ClinicalLogicService {
         this.patientDAO = patientDAO;
     }
 
+    /**
+     * Inserts a prescription unless an adverse reaction blocks the medication for this patient.
+     *
+     * @throws WarningException when prescription should be blocked pending override
+     */
     public int createPrescription(int patientId, Prescription prescription) throws WarningException {
         if (adverseReactionDAO.existsByPatientAndMedication(patientId, prescription.getMedicationId())) {
             throw new WarningException(patientId, prescription.getMedicationId());
@@ -46,6 +62,12 @@ public class ClinicalLogicService {
         return prescriptionDAO.insert(prescription);
     }
 
+    /**
+     * Records a prescriber override then inserts the prescription.
+     *
+     * @throws IllegalArgumentException when override does not match prescription
+     * @throws IllegalStateException when no adverse reaction exists to override
+     */
     public int createPrescriptionWithOverride(int patientId, Prescription prescription, WarningOverride override) {
         if (override.getPrescriberId() != prescription.getPrescriberId()) {
             throw new IllegalArgumentException("Override prescriber must match prescription");
@@ -60,6 +82,7 @@ public class ClinicalLogicService {
         return prescriptionDAO.insert(prescription);
     }
 
+    /** Sets {@code self_harm_history} if deliberate self-harm incidents exist for the patient. */
     public void refreshSelfHarmHistoryFlag(int patientId) {
         if (incidentDAO.hasDeliberateSelfHarm(patientId)) {
             patientDAO.updateSelfHarmHistory(patientId, true);

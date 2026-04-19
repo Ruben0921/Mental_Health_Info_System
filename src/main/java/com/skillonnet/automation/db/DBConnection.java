@@ -9,6 +9,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * JDBC access configured from {@value #CONFIG_RESOURCE} on the classpath (singleton).
+ */
 public final class DBConnection {
 
     private static final Logger LOG = Logger.getLogger(DBConnection.class.getName());
@@ -33,6 +36,7 @@ public final class DBConnection {
         this.password = require(props, KEY_PASSWORD);
     }
 
+    /** @return the shared instance */
     public static DBConnection getInstance() {
         return Holder.INSTANCE;
     }
@@ -58,6 +62,7 @@ public final class DBConnection {
         return value.trim();
     }
 
+    /** Opens a new JDBC connection (caller must close). */
     public Connection newConnection() {
         try {
             return DriverManager.getConnection(jdbcUrl, username, password);
@@ -67,6 +72,7 @@ public final class DBConnection {
         }
     }
 
+    /** Returns a shared connection, opening one if needed. */
     public synchronized Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
@@ -79,6 +85,7 @@ public final class DBConnection {
         return connection;
     }
 
+    /** Closes the shared connection if present. */
     public synchronized void closeConnection() {
         if (connection == null) {
             return;

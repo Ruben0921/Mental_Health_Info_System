@@ -16,12 +16,16 @@ import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 
+/**
+ * Medical records REST API for aggregate reports and change requests ({@link Roles#MEDICAL_RECORDS}).
+ */
 @Path("reports")
 public class ReportingService {
 
     private final ReportingDAO reportingDAO = new ReportingDAO();
     private final ChangeRequestDAO changeRequestDAO = new ChangeRequestDAO();
 
+    /** Distinct patient counts per clinic (via appointments). */
     @GET
     @Path("patients-per-clinic")
     @Produces(MediaType.APPLICATION_JSON)
@@ -30,6 +34,7 @@ public class ReportingService {
         return reportingDAO.countDistinctPatientsPerClinic();
     }
 
+    /** Prescription row counts grouped by medication. */
     @GET
     @Path("prescription-stats")
     @Produces(MediaType.APPLICATION_JSON)
@@ -38,6 +43,7 @@ public class ReportingService {
         return reportingDAO.prescriptionTotalsByMedication();
     }
 
+    /** Stores a patient data change request for medical records review. */
     @POST
     @Path("change-requests")
     @Consumes(MediaType.APPLICATION_JSON)

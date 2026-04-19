@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** DTO: prescription totals grouped by medication. */
 public class MedicationPrescriptionStat {
 
     private int medicationId;

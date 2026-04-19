@@ -11,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Persists prescriber overrides when warnings are acknowledged.
+ */
 public class WarningOverrideDAO {
 
     private final DBConnection db;
@@ -23,6 +26,7 @@ public class WarningOverrideDAO {
         this.db = db;
     }
 
+    /** @return generated {@code override_id} */
     public int insert(WarningOverride o) {
         String sql = """
                 INSERT INTO warning_override (prescriber_id, medication_id, warning_details, override_date)
@@ -51,6 +55,7 @@ public class WarningOverrideDAO {
         }
     }
 
+    /** Counts override rows for a prescriber/medication pair. */
     public long countByPrescriberAndMedication(int prescriberId, int medicationId) {
         String sql = "SELECT COUNT(*) FROM warning_override WHERE prescriber_id = ? AND medication_id = ?";
         try (Connection conn = db.newConnection();

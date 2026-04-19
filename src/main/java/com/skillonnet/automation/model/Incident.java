@@ -2,6 +2,7 @@ package com.skillonnet.automation.model;
 
 import java.time.LocalDate;
 
+/** Clinical incident (e.g. self-harm) linked to a patient. */
 public class Incident {
 
     private int incidentId;

@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** DTO: distinct patient counts per clinic for reporting APIs. */
 public class ClinicPatientCount {
 
     private int clinicId;

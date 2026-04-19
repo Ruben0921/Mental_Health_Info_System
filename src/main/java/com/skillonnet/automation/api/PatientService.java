@@ -17,11 +17,15 @@ import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 
+/**
+ * Clinical REST API for patient records ({@link Roles#CLINICAL}).
+ */
 @Path("patients")
 public class PatientService {
 
     private final PatientDAO patientDAO = new PatientDAO();
 
+    /** Lists all patients. */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Patient> list(@Context SecurityContext sc) {
@@ -29,6 +33,7 @@ public class PatientService {
         return patientDAO.findAll();
     }
 
+    /** Returns a single patient by id. */
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -37,6 +42,7 @@ public class PatientService {
         return patientDAO.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    /** Updates an existing patient; rejects mismatched body id. */
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)

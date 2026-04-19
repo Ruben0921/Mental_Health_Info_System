@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * CRUD access to the {@code patients} table; enforces read-only semantics for deceased patients.
+ */
 public class PatientDAO {
 
     private final DBConnection db;
@@ -26,6 +29,7 @@ public class PatientDAO {
         this.db = db;
     }
 
+    /** @return generated {@code patient_id} */
     public int insert(Patient p) {
         String sql = """
                 INSERT INTO patients (first_name, last_name, address, homeless, risk_status, deceased, self_harm_history)
@@ -53,6 +57,7 @@ public class PatientDAO {
         }
     }
 
+    /** Loads a patient by primary key. */
     public Optional<Patient> findById(int patientId) {
         String sql = """
                 SELECT patient_id, first_name, last_name, address, homeless, risk_status, deceased, self_harm_history
@@ -71,6 +76,7 @@ public class PatientDAO {
         }
     }
 
+    /** Lists all patients ordered by id. */
     public List<Patient> findAll() {
         String sql = """
                 SELECT patient_id, first_name, last_name, address, homeless, risk_status, deceased, self_harm_history
@@ -88,6 +94,11 @@ public class PatientDAO {
         }
     }
 
+    /**
+     * Updates mutable patient fields.
+     *
+     * @throws DeceasedPatientException when the patient is deceased
+     */
     public void update(Patient p) {
         Optional<Patient> existing = findById(p.getPatientId());
         if (existing.isEmpty()) {
@@ -118,6 +129,7 @@ public class PatientDAO {
         }
     }
 
+    /** Updates the self-harm history flag only. */
     public void updateSelfHarmHistory(int patientId, boolean selfHarmHistory) {
         String sql = "UPDATE patients SET self_harm_history = ? WHERE patient_id = ?";
         try (Connection conn = db.newConnection();
@@ -133,6 +145,11 @@ public class PatientDAO {
         }
     }
 
+    /**
+     * Deletes a living patient row.
+     *
+     * @throws DeceasedPatientException when the patient is deceased (delete not allowed)
+     */
     public void deleteById(int patientId) {
         String sql = "DELETE FROM patients WHERE patient_id = ? AND deceased = FALSE";
         try (Connection conn = db.newConnection();

@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** Clinic or health centre (maps to {@code clinics} table). */
 public class Clinic {
 
     private int clinicId;

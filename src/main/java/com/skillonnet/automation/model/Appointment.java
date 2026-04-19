@@ -2,6 +2,7 @@ package com.skillonnet.automation.model;
 
 import java.time.LocalDate;
 
+/** Scheduled consultation (maps to {@code appointment} table). */
 public class Appointment {
 
     private int appointmentId;

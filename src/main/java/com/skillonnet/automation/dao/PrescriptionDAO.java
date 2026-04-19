@@ -11,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Prescription rows linked to appointments.
+ */
 public class PrescriptionDAO {
 
     private final DBConnection db;
@@ -23,6 +26,7 @@ public class PrescriptionDAO {
         this.db = db;
     }
 
+    /** @return generated {@code prescription_id} */
     public int insert(Prescription p) {
         String sql = """
                 INSERT INTO prescription (appointment_id, medication_id, prescriber_id, issue_date, repeat_presc)
@@ -52,6 +56,7 @@ public class PrescriptionDAO {
         }
     }
 
+    /** Counts matching prescriptions joined through the appointment's patient. */
     public long countByPatientMedicationPrescriber(int patientId, int medicationId, int prescriberId) {
         String sql = """
                 SELECT COUNT(*) FROM prescription pr

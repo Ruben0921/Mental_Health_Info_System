@@ -1,5 +1,8 @@
 package com.skillonnet.automation.api;
 
+/**
+ * Response wrapper returning a generated id (e.g. change request id).
+ */
 public class CreatedId {
 
     private int requestId;
@@ -7,6 +10,7 @@ public class CreatedId {
     public CreatedId() {
     }
 
+    /** @param requestId generated entity id (e.g. change request) */
     public CreatedId(int requestId) {
         this.requestId = requestId;
     }

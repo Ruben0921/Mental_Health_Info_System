@@ -1,5 +1,6 @@
 package com.skillonnet.automation.model;
 
+/** DTO: row for missed-appointment listing by date. */
 public class MissedPatientRow {
 
     private int appointmentId;

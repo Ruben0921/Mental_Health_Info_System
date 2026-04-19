@@ -2,6 +2,7 @@ package com.skillonnet.automation.model;
 
 import java.time.LocalDate;
 
+/** Medication issued in context of an appointment (maps to {@code prescription} table). */
 public class Prescription {
 
     private int prescriptionId;

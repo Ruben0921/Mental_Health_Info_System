@@ -11,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Incident records (e.g. deliberate self-harm) for clinical risk logic.
+ */
 public class IncidentDAO {
 
     private static final String DELIBERATE = "Deliberate";
@@ -25,6 +28,7 @@ public class IncidentDAO {
         this.db = db;
     }
 
+    /** @return generated {@code incident_id} */
     public int insert(Incident i) {
         String sql = "INSERT INTO incident (patient_id, type, description, incident_date) VALUES (?, ?, ?, ?)";
         try (Connection conn = db.newConnection();
@@ -51,6 +55,7 @@ public class IncidentDAO {
         }
     }
 
+    /** @return true if any incident of type "Deliberate" exists for the patient */
     public boolean hasDeliberateSelfHarm(int patientId) {
         String sql = "SELECT 1 FROM incident WHERE patient_id = ? AND type = ?";
         try (Connection conn = db.newConnection();
