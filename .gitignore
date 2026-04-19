@@ -45,3 +45,6 @@ build/
 .vscode/
 
 .DS_Store
+
+# Local JDBC/API credentials (keep a private copy; use README to create yours)
+src/main/resources/config.properties
