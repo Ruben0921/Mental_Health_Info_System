@@ -258,6 +258,27 @@ erDiagram
 - **INCIDENT.type:** e.g. Deliberate, Accidental.  
 - **CHANGE_REQUEST.status:** e.g. Pending, Accepted, Rejected. Change requests store raw payloads only and do not reference `patient_id` in the implemented DAO.
 
+## Frontend: which service to call for what data
+
+The HTTP API is a single Jersey app: there is **no** path prefix beyond the host you set in `api.baseUri` (e.g. `http://localhost:8080/`). Every request must send **HTTP Basic Auth** with a user whose **role** matches the endpoint (see table below). JSON uses **camelCase** property names (Jackson).
+
+| If the UI needs… | Call (method + path) | Backend class | Role required | Response (JSON shape) |
+|------------------|----------------------|----------------|-----------------|------------------------|
+| A list of all patients | `GET /patients` | [`PatientService`](src/main/java/com/skillonnet/automation/api/PatientService.java) | `Clinical` | Array of patient objects: `patientId`, `firstName`, `lastName`, `address`, `homeless`, `riskStatus`, `deceased`, `selfHarmHistory` |
+| One patient’s details | `GET /patients/{id}` | same | `Clinical` | Single patient object (same fields as above) |
+| Save edits to a patient | `PUT /patients/{id}` | same | `Clinical` | Updated patient object (body must be the same JSON shape; `patientId` in body must match `{id}` or be omitted/zero) |
+| Create a new appointment | `POST /appointments` | [`AppointmentService`](src/main/java/com/skillonnet/automation/api/AppointmentService.java) | `Receptionist` | Appointment object including generated `appointmentId`, plus `patientId`, `clinicId`, `staffId`, `appointmentDate`, `type`, `status`, `recordsUpdated` |
+| Mark attendance / status for an appointment | `PUT /appointments/{id}/attendance` | same | `Receptionist` | **204** empty body; send JSON `{"status":"Attended"}` (or `Missed`, etc.) |
+| Who missed appointments on a given day | `GET /appointments/missed?date=YYYY-MM-DD` | same | `Receptionist` | Array of rows: `appointmentId`, `patientId`, `firstName`, `lastName` |
+| Appointments still needing record updates | `GET /appointments/pending-records` | same | `Receptionist` | Array of appointments: `appointmentId`, `patientId`, `clinicId`, `staffId`, `appointmentDate`, `type`, `status`, `recordsUpdated` |
+| Management: patients per clinic | `GET /reports/patients-per-clinic` | [`ReportingService`](src/main/java/com/skillonnet/automation/api/ReportingService.java) | `Medical_Records` | Array: `clinicId`, `clinicName`, `patientCount` |
+| Management: prescription volume by drug | `GET /reports/prescription-stats` | same | `Medical_Records` | Array: `medicationId`, `medicationName`, `prescriptionCount` |
+| Submit a patient data change request | `POST /reports/change-requests` | same | `Medical_Records` | **201** with JSON `{"requestId":…}` (class [`CreatedId`](src/main/java/com/skillonnet/automation/api/CreatedId.java)); request body: `rawPatientData`, `requestedChanges` (strings) |
+
+**Auth from the browser:** send an `Authorization: Basic …` header (Base64 of `username:password`). Wrong or missing credentials → **401**; correct user but wrong role for that path → **403** (JSON `{"error":"forbidden"}`). Server/database errors on supported routes may return **500** with `{"error":"…"}`.
+
+**Not exposed over HTTP today:** prescription warnings, overrides, incidents, and related logic live under [`ClinicalLogicService`](src/main/java/com/skillonnet/automation/service/ClinicalLogicService.java) and DAOs only—there is no REST surface for those yet. Extend with new resource classes if the frontend needs them.
+
 ## Project layout
 
 | Area | Package / path |
